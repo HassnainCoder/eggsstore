@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="ur"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desi Anday – Fresh Farm Eggs</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#fff8ec;color:#3b2a14}
+header{background:#c9791a;color:#fff;text-align:center;padding:28px 16px}h1{margin:0;font-size:28px}
+main{max-width:520px;margin:auto;padding:16px}.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px #0001}
+.big{font-size:44px;font-weight:700;color:#c9791a}.sold{color:#b00020}
+input,textarea,button{width:100%;padding:12px;margin:6px 0;border:1px solid #d9c7a6;border-radius:10px;font:inherit}
+button{background:#c9791a;color:#fff;border:0;font-weight:700;cursor:pointer}button:disabled{background:#aaa}
+#msg,#cmsg{font-weight:600;margin-top:6px}
+</style></head><body>
+<header><h1>🥚 Desi Anday</h1><div>Taza desi anday, ghar tak delivery</div></header>
+<main>
+<div class="card" style="text-align:center"><div>Abhi available</div><div class="big" id="stock">…</div><div>anday • Rate: Rs <span id="price">…</span> per anda</div></div>
+<div class="card"><h3>Order karein</h3>
+<input id="name" placeholder="Aap ka naam"><input id="phone" type="tel" placeholder="Phone number">
+<textarea id="address" rows="2" placeholder="Poora address"></textarea>
+<input id="qty" type="number" min="1" placeholder="Kitne anday chahiye?">
+<div>Total: Rs <b id="total">0</b></div>
+<button id="obtn" onclick="order()">Order bhejein</button><div id="msg"></div></div>
+<div class="card"><h3>Shikayat / Feedback</h3>
+<input id="cname" placeholder="Naam (optional)"><input id="cphone" placeholder="Phone (optional)">
+<textarea id="cmsgt" rows="3" placeholder="Apni shikayat likhein"></textarea>
+<button onclick="complain()">Bhejein</button><div id="cmsg"></div></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);let P=0;
+async function load(){try{const d=await (await fetch('/api?a=stock')).json();P=d.price;
+$('stock').textContent=d.stock;$('price').textContent=d.price;$('qty').max=d.stock;
+$('obtn').disabled=d.stock<=0;$('obtn').textContent=d.stock<=0?'Stock khatam hai':'Order bhejein';calc()}catch(e){}}
+function calc(){$('total').textContent=(parseInt($('qty').value)||0)*P}
+$('qty').oninput=calc;load();setInterval(load,10000);
+async function post(a,body){const r=await fetch('/api?a='+a,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return [r.ok,await r.json()]}
+async function order(){const [ok,d]=await post('order',{name:$('name').value,phone:$('phone').value,address:$('address').value,qty:$('qty').value});
+$('msg').style.color=ok?'green':'#b00020';$('msg').textContent=ok?`Shukriya! Order #${d.id} ho gaya. Total Rs ${d.total}. Hum jaldi rabta karenge.`:d.error;if(ok){$('qty').value='';calc()}load()}
+async function complain(){const [ok,d]=await post('complaint',{name:$('cname').value,phone:$('cphone').value,message:$('cmsgt').value});
+$('cmsg').style.color=ok?'green':'#b00020';$('cmsg').textContent=ok?'Shikayat mil gayi, shukriya.':d.error;if(ok)$('cmsgt').value=''}
+</script></body></html>
