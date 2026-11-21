@@ -36,5 +36,5 @@ async function availability(id,v){try{await api('availability',{id:id,inStock:v}
 async function status(id,v){try{await api('status',{orderCode:id,status:v},true);await refreshAdmin()}catch(e){toast(e.message);await refreshAdmin()}}
 async function delOrder(id){if(!confirm('Permanently delete this order?'))return;try{await api('delete-order',{orderCode:id},true);await refreshAdmin()}catch(e){toast(e.message)}}
 function logout(){adminPass='';document.getElementById('pass').value='';document.getElementById('panel').style.display='none';document.getElementById('login').style.display='block'}
-load();drawCart();
+load();drawCart();if(new URLSearchParams(window.location.search).get('owner')==='1')show('admin');
 </script></body></html>
