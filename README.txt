@@ -13,7 +13,7 @@ VERCEL
 
 OWNER
 Open /admin.html or click Owner. Sign in with ADMIN_PASS.
-Set the real on-hand stock quantity for every egg pack and hen breed before accepting orders. Until a quantity is entered, stockQty=null means stock is not quantity-tracked. Setting stock to zero marks the item sold out.
+Set the real on-hand stock quantity for every egg pack and hen breed before accepting orders. New products start at zero stock and are marked sold out until you enter a real quantity. This prevents orders being accepted against unknown inventory.
 Product rates and stock can be updated from the owner dashboard.
 Orders are stored in Redis. Customers track an order using the order ID and the same phone number used at checkout.
 
